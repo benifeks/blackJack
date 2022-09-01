@@ -92,3 +92,23 @@
 .button {
   background: radial-gradient(#FFFFE0 0%, #BDB76B 80%);
 }
+
+.par {
+  width: 600px;
+  background: radial-gradient(#FFFFE0 0%, #BDB76B 80%);
+  
+}
+
+table {
+  margin: auto;
+  border: 2px solid black;
+  text-align: center;
+}
+
+th {
+  border: 1px solid grey;
+}
+
+td {
+  border: 1px solid grey;
+}
