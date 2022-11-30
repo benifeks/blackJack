@@ -1,92 +1,76 @@
-
-
-let score, scoreBank, coloda, card, p;
+let score, scoreBank, card, p;
 let openСards = [];
+////////////////////
+class Card {
+    constructor(suit, rank, value) {
+        this.suit = suit;
+        this.rank = rank;
+        this.value = value;
+    }
+}
+////////////////
+class Deck {
 
-////////////tosovka///////////////
+    constructor() {
+
+        this.cards = [];
+        this.suits = ['&clubs;', '&diams;', '&hearts;', '&spades;'];
+        this.ranks = ['6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        this.values = [6, 7, 8, 9, 10, 2, 3, 4, 11];
+
+    }
+
+    createDeck() {
+
+        this.suits.map(item =>
+            this.ranks.map((elem, i) =>
+                this.cards.push(new Card(item, this.ranks[i], this.values[i]))
+            ));
+        return this.cards;
+    }
+
+    shuffleDeck() {
+
+        deck.createDeck().sort(() => Math.random() - 0.5);
+        return this.cards;
+    }
+}
+
+let deck = new Deck();
+
 function tosovka() {
     document.querySelector('#btn1').innerHTML = 'взять';
     document.querySelector('#btn2').innerHTML = 'пас';
     openСards.length = 0;
     score = 0;
     scoreBank = 0;
-    coloda = [];
+    deck.cards = [];
     card = 0;
     document.querySelector('#result').innerHTML = 'идёт игра';
     document.querySelector('#pl').innerHTML = '';
     document.querySelector('#bank').innerHTML = '';
     document.querySelector('#score').innerHTML = '';
     document.querySelector('#scoreBank').innerHTML = '';
-
-    class Card {
-        constructor(suit, rank, value) {
-            this.suit = suit;
-            this.rank = rank;
-            this.value = value;
-        }
-    }
-
-    //let сard = new Card("an awesome Suit", "Joker", 100);
-    //console.log(сard);
-
-    class Deck {
-        constructor() {
-            this.cards = [];
-        }
-
-        createDeck() {
-            let suits = ['&clubs;', '&diams;', '&hearts;', '&spades;'];
-            let ranks = ['6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-            let values = [6, 7, 8, 9, 10, 2, 3, 4, 11];
-
-            for (let i = 0; i < suits.length; i++) {
-                for (let j = 0; j < ranks.length; j++) {
-                    this.cards.push(new Card(suits[i], ranks[j], values[j]));
-                }
-            }
-        }
-
-        shuffleDeck() {
-            let location1, location2, tmp;
-            for (let i = 0; i < 1000; i++) {
-                location1 = Math.floor((Math.random() * this.cards.length));
-                location2 = Math.floor((Math.random() * this.cards.length));
-                tmp = this.cards[location1];
-                this.cards[location1] = this.cards[location2];
-                this.cards[location2] = tmp;
-            }
-        }
-    }
-
-    const d = new Deck();
-    d.createDeck(); //создать колоду
-    d.shuffleDeck(); // тосовать
-    coloda = d.cards;
-    //console.log(d.cards);
-
+    deck.shuffleDeck();
 }
-///////////////////////////////
-
-////////////bankir//////////
+/////////////////////////////////////////////////////
 
 function bankir() {
 
-    let cardBankir = Object.entries(coloda[0]);
-
-    cardBankir = cardBankir.map(elem => elem[1]);
-    openСards.push(cardBankir);
-
-    //console.log(openСards);
+    openСards.push(Object.values(deck.cards[0]));
+    scoreBank = scoreBank + deck.cards[0].value;
 
     let divCard = document.querySelector('#bank');
     p = document.createElement('div');
+
     p.classList.add("coloda");
+
     p.style.background = 'radial-gradient(#000 0%, #7B1672 100%)';
+
     divCard.append(p);
 
-    coloda.shift();
+    deck.cards.shift();
 
-    scoreBank = scoreBank + cardBankir[2];
     if (scoreBank > 21) {
 
         document.querySelector('#scoreBank').innerHTML = `перебор ${scoreBank}`;
@@ -95,49 +79,43 @@ function bankir() {
 
     } else if (scoreBank > 14 && scoreBank <= 21) {
 
-        document.querySelector('#scoreBank').innerHTML = `пас`; 
-
-    } 
+        document.querySelector('#scoreBank').innerHTML = `пас`;
+    }
 
 }
 
-///////////////////////
 function launchBankir() {
 
     if (scoreBank < 15) {
 
         bankir();
         launchBankir();
-        // setTimeout(function() {
-
-        // bankir();
-        //  launchBankir();
-
-        //  }, 500);
 
     }
 }
-//////aaa/////
 
-function aaa() {
+function take() {
 
-    card = Object.entries(coloda[0]);
-    //console.log(card);
+    card = Object.entries(deck.cards[0]);
 
     card = card.map(elem => elem[1]);
 
-    //console.log(card);
     let divCard = document.querySelector('#pl');
+
     let p = document.createElement('div');
     p.classList.add("coloda");
     p.style.background = 'radial-gradient(#FFFFE0 0%, #BDB76B 70%)';
     p.innerHTML = `<div>${card[0]}<br>${card[1]}</div>`;
     divCard.append(p);
 
-    coloda.shift();
-
+    deck.cards.shift();
     score = score + card[2];
-    if (score <= 21) {
+
+    if (score === 21) {
+        document.querySelector('#score').innerHTML = score;
+        pasLaunch();
+
+    } else if (score < 21) {
         document.querySelector('#score').innerHTML = score;
     } else {
 
@@ -145,35 +123,29 @@ function aaa() {
 
         document.querySelector('#score').innerHTML = `перебор ${score}`;
         document.querySelector('#result').innerHTML = 'вы проиграли';
-        cardBankir = '';
+        let cardBankir = '';
         card = '';
     }
 
     if (scoreBank < 15 && score <= 21) {
 
         bankir();
-        //setTimeout(bankir, 500);
 
     }
 
 }
-////////////////
 
-///////launchAaa/////
 
-function launchAaa() {
+function launchTake() {
 
     if (card !== '') {
 
-        aaa();
+        take();
 
     }
 
 }
 
-///////
-
-///////pas/////////////
 
 function pas() {
 
@@ -182,11 +154,7 @@ function pas() {
 
     launchBankir();
 
-    //console.log(openСards);
-
     showСards();
-
-    /////////////
 
     function compare() {
 
@@ -206,19 +174,15 @@ function pas() {
         }
 
     }
-
     compare();
 
-    //setTimeout(compare, 2500);
 }
 
-///////pasLaunch/////
 function pasLaunch() {
 
     if (score <= 21 && score !== 0) {
 
-        //pas();
-        setTimeout(pas, 500);
+        pas();
 
     }
 
@@ -238,7 +202,7 @@ function showСards() {
         document.querySelector('#scoreBank').innerHTML = scoreBank;
     }
 
-    openСards.forEach(function (elem) {
+    openСards.forEach((elem) => {
 
         let p = document.createElement('div');
         p.classList.add("coloda");
@@ -247,6 +211,4 @@ function showСards() {
         divCard.append(p);
     });
 
-
 }
-
